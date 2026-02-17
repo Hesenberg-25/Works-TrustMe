@@ -4,16 +4,7 @@
 #include <random>
 using namespace std;
 
-class Main
-{
-public:
-    void welcome(void)
-    {
-        cout << "======= :: WELCOME TO HESENBERG ONLINE PARKING :: =======" << endl;
-    }
-};
-
-class Wheeler : protected Main
+class Wheeler
 {
 protected:
     string generate_id()
@@ -30,6 +21,10 @@ protected:
 
 private:
 public:
+    void welcome(void)
+    {
+        cout << "======= :: WELCOME TO HESENBERG ONLINE PARKING :: =======" << endl;
+    }
     void input_details(string, string, string, float);
     void input_details(string num, string name, string phone)
     {
@@ -45,12 +40,56 @@ public:
         strftime(timestamp, sizeof(timestamp), "%d-%m-%Y %H:%M:%S", local);
         return string(timestamp);
     }
-    void times(string);
-    void times(string time_booked)
+    string time_then()
     {
-        timed = time_booked;
+        string time;
+        int choice;
+        cout << "ENTER THE NUMBER FOR TIME UNIT : " << endl
+             << "1. MINUTES" << endl
+             << "2. HOURS" << endl
+             << "3. DAYS" << endl;
+        switch (choice)
+        {
+        case 1:
+            time = time + " " + "MINUTES";
+            break;
+        case 2:
+            time = time + " " + "HOURS";
+            break;
+        case 3:
+            time = time + " " + "DAYS";
+            break;
+        default:
+            break;
+        }
+    }
+    void times(float, float);
+    void times(float booked_for, float exit_time)
+    {
+        string time;
+        int choice;
+        cout << "ENTER THE NUMBER FOR TIME UNIT : " << endl
+             << "1. MINUTES" << endl
+             << "2. HOURS" << endl
+             << "3. DAYS" << endl;
+        switch (choice)
+        {
+        case 1:
+            time = time + " " + "MINUTES";
+            
+            break;
+        case 2:
+            time = time + " " + "HOURS";
+            break;
+        case 3:
+            time = time + " " + "DAYS";
+            break;
+        default:
+            break;
+        }
         cout << "5. BOOKED AT     : " << time_now();
-        cout << "6. BOOKED FOR    : " << timed << endl;
+        cout << "6. BOOKED FOR    : " << time << endl;
+        cout << "7. EXIT TIME     : ";
     }
     void output(void)
     {
@@ -65,29 +104,23 @@ public:
 
 int main()
 {
+    string vehicle_numplate;
+    string owner_name;
+    string phone_number;
+    Wheeler C1;
+    C1.welcome();
+    cout << "ENTER YOUR NAME : ";
+    cin >> owner_name;
+    cout << "ENTER PHONE NUMBER : ";
+    cin >> phone_number;
+    cout << "ENTER THE VEHICLE NUMBERPLATE : ";
+    cin >> vehicle_numplate;
     string time, timed;
-    float times;
+    float time;
     cout << "ENTER FOR HOW MUCH TIME YOU WANT TO PARK : ";
-    cin >> times;
-    time = times;
-    int choice;
-    cout << "ENTER THE NUMBER FOR TIME UNIT : " << endl
-         << "1. MINUTES" << endl
-         << "2. HOURS" << endl
-         << "3. DAYS" << endl;
-    switch (choice)
-    {
-    case 1:
-        timed = time + " " + "MINUTES";
-        break;
-    case 2:
-        timed = time + " " + "HOURS";
-        break;
-    case 3:
-        timed = time + " " + "DAYS";
-        break;
-    default:
-        break;
-    }
+    cin >> time;
+    C1.input_details(vehicle_numplate, owner_name, phone_number);
+    C1.times(time,time);
+    C1.output();
     return 0;
 }
