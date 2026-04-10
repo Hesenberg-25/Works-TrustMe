@@ -1,114 +1,124 @@
-expenses=[]
-print("="*100)
-print("PERSONAL EXPENSE TRACKER".center(50))
-print("="*100)
-while True :
-  print("="*100)
-  print("1. ADD NEW EXPENSE")
-  print("2. VIEW ALL EXPENSE")
-  print("3. CATEGORY SUMMARY")
-  print("4. BUGET TRACKER")
-  print("5. SEARCH EXPENSE")
-  print("6. EXIT")
-  print("="*100)
-  choice=int(input("ENTER YOUR CHOICE FROM (1-6) :"))
-  categories=["FOOD","TRANSPORT","ENTERTAINMENT","BILLS","CLOTHES","OTHERS"]
-  if choice == 1 :
-#FOR OPTOIN NO 1
-    print("✅ADD NEW EXPENSE FUNCTIONALITY")
-    categories=["FOOD","TRANSPORT","ENTERTAINMENT","BILLS","CLOTHES","OTHERS"]
-    categories_join=",".join(categories)
-    print(f"AVAILABLE CHOICES : {categories_join }")
-    category=input("ENTER THE DESIRED CATEGORY : ").upper()
-    amount=float(input("ENTER THE AMOUNT SPENT : "))
-    desc=input("ENTER THE DESCRIPTOIN : ").upper()
-    print(f"CATEGORY IS {category}, AMOUNT SPENT IS {amount}, DESCRIPTION IS {desc}")
-    expense={}
-    expense["CATEGORY"]=category
-    expense["AMOUNT"]=amount
-    expense["DESC"]=desc
-    expenses.append(expense)
-#FOR OPTION NO 2
-  elif choice==2 :
-    print("--- ALL EXPENSES ---")
-    count=1
+# In professional finance apps, users don't just want to see a list of what they spent.
+# They want the app to tell them how to be better with money.
+
+from datetime import date
+import csv
+category = ["Food", "Transport", "Household", "Education", "Health", "Utilities", "Other"]
+months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+def select_category(i):
+    date_today=date.today()
+    month_today=date_today.month
+    print("\n")
+    print(f"Category : {category[i-1]}")
+    price=float(input("Enter the Amount Spend : "))
+    print(f"Expense Spend on {category[i-1]} : {price}\n")
+    with open("Expenses.csv", "a", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow([date_today,months[month_today-1].capitalize(),category[i-1].capitalize(),price])
+    print("New Expense Added Successfully")
+    print("\n")
+
+def add_new_expense():
+    print("Add New Expense :: ")
+    print("\n")
+    while(True):
+        for i in range(7):
+            print(f"{i+1}.{category[i]}")
+        print("8.Exit")
+        choice1=int(input("Enter Desired Category : "))
+        if(choice1<=len(category)):
+            select_category(choice1)
+        else:
+            break;
+
+def see_desired_expense():
+    print("See Desired Expense")
+    desired_category=str(input("Enter the Desired Category : ").capitalize())
+    desired_month=int(input("Enter the Month No (1 for Jan ...) : "))
+    print(f"Detail Expenses on {desired_category} in month of {months[desired_month-1]} : ")
     total=0
-    for i in expenses:
-      print(f"#{count} | {i['CATEGORY']} | {i['AMOUNT']} | {i['DESC']}" )
-      count=count+1
-      total=total+i["AMOUNT"]
-    print("-"*50)
-    print(f"YOUR TOTAL EXPENSES ARE : {total}")
-# FOR OPTION NO 3
-  elif choice==3:
-    print("✅CATEGORY SUMMARY")
-    food_total=0
-    entertainment_total=0
-    transport_total=0
-    bills_total=0
-    clothes_total=0
-    other_total=0
-    for i in expenses:
-      item=i["CATEGORY"].upper()
-      amount=i["AMOUNT"]
-      if i["CATEGORY"]=="FOOD":
-        food_total=food_total+i["AMOUNT"]
-      elif i["CATEGORY"]=="TRANSPORT":
-        transport_total=transport_total+i["AMOUNT"]
-      elif i["CATEGORY"]=="ENTERTAINMENT":
-         entertainment_total=entertainment_total+i["AMOUNT"]
-      elif i["CATEGORY"]=="BILLS":
-        bills_total=bills_total+i["AMOUNT"]
-      elif i["CATEGORY"]=="CLOTHES":
-         clothes_total=clothes_total+i["AMOUNT"]
-      else:
-          other_total=other_total+i["AMOUNT"]
-    print(f"AMOUNT SPEND ON FOOD :{food_total}")
-    print(f"AMOUNT SPEND ON TRANSPORT : {transport_total}")
-    print(f"AMOUNT SPEND ON ENTER : {entertainment_total}")
-    print(f"AMOUNT SPEND ON BILLS : {bills_total}")
-    print(f"AMOUNT SPEND ON CLOTHES : {clothes_total}")
-    print(f"AMOUNT SPEND ON OTHERS : {other_total}")
-# FOR OPTION NO 4
-  elif choice==4:
-    budget=2000
-    left=budget-total
-    print(left)
-    if left>0:
-      print("YOU ARE UNDER BUDGET")
-    else :
-      print("YOU NEED TO MANAGE YOUR BUDGET")
-# FOR OPTION NO 5
-  elif choice==5:
-    choice=input("ENTER THE TYPE BY WHICH YOU WANT TO SEARCH (CATEGORY,AMOUNT,DESC) : ").upper()
-    if choice == "CATEGORY":
-      select=input("ENTER THE CATEGORY : ").upper()
-      for i in expenses :
-        if i["CATEGORY"].upper()==select:
-          print(i["CATEGORY"],i["AMOUNT"],i["DESC"])
-    elif choice =="DESC":
-      select=input("ENTR THE DESC : ").upper()
-      for i in expenses:
-        if i["DESC"].upper()==select:
-          print(i["CATEGORY"],i["AMOUNT"],i["DESC"])
-    elif choice =="AMOUNT":
-      relate=input("ENTER WEATHER YOU WANT TO SEARCH GREATER/SMALLER/EQUAL : ").upper()
-      select=int(input("ENTR THE AMOUNT : "))
-      if relate=="GREATER":
-         for i in expenses:
-          if i["AMOUNT"]>=select:
-            print(i["CATEGORY"],i["AMOUNT"],i["DESC"])
-      elif relate=="SMALLER":
-        for i in expenses:
-         if i["AMOUNT"]>=select:
-           print(i["CATEGORY"],i["AMOUNT"],i["DESC"])
-      elif relate=="EQUAL":
-        for i in expenses:
-         if i["AMOUNT"]==select:
-           print(i["CATEGORY"],i["AMOUNT"],i["DESC"])
-# FOR OPTION NO 6
-  elif choice==6:
-    print("✅THANK YOU FOR VISITING")
-    break
-  else:
-    print("INVALID OPTION, PLEASE TRY AGAIN")
+    found_any=False
+    with open("Expenses.csv",'r') as file :
+        reader = csv.DictReader(file)
+        print(f"\n{'Date':<15} | {'Amount':<10}")
+        print("-"*28)
+        for row in reader:
+            if (row['Category']==desired_category and row['Month']==months[desired_month-1]):
+                amount_see=float(row['Amount'])
+                date_see=row['Date']
+                total+=amount_see
+                print(f"{row['Date']:<15} | {amount_see:<10}")
+                found_any=True
+    if not found_any:
+        print("No Data Found")
+    print("-"*28)
+    print(f"Total Amount spend on {desired_category} : {total}")
+
+
+#Summary Expense
+def see_summary():
+    print("See Summary")
+    print("1. Monthly")
+    print("2. Yearly")
+    choice3 = int(input("Select the Timeline for Summary : "))
+    #Yearly
+    if choice3 == 2:
+        total_yearly = 0
+        found_any = False
+        with open("Expenses.csv", 'r') as file:
+            reader = csv.DictReader(file)
+            print(f"\n{'Date':<15} | {'Amount':<10}")
+            print("-" * 28)
+            for row in reader:
+                amount_see = float(row['Amount'])
+                total_yearly += amount_see
+                print(f"{row['Date']:<15} | {amount_see:<10}")
+                found_any = True
+        
+        if not found_any:
+            print("No Data Found")
+        print("-" * 28)
+        print(f"Total Amount spent Yearly: {total_yearly}")
+    #Monthly
+    elif choice3 == 1:
+        desired_monthly = int(input("Enter the Month No (1 for Jan ...) : "))
+        total_monthly = 0
+        found_any = False
+        
+        with open("Expenses.csv", 'r') as file:
+            reader = csv.DictReader(file)
+            print(f"\n{'Date':<15} | {'Amount':<10}")
+            print("-" * 28)
+            for row in reader:
+                if row['Month'] == months[desired_monthly-1]:
+                    amount_see = float(row['Amount'])
+                    total_monthly += amount_see
+                    print(f"{row['Date']:<15} | {amount_see:<10}")
+                    found_any = True
+        
+        if not found_any:
+            print("No Data Found")
+        print("-" * 28)
+        print(f"Total Amount spent in {months[desired_monthly-1]} : {total_monthly}")
+    else:
+        print("Invalid Input")
+print("Welcome to Expense Tracker")
+while (True):
+    print("\n")
+    print("1. Add New Expense")
+    print("2. See Desired Category")
+    print("3. See Summary")
+    print("4. Exit")
+    choice = (int(input("Enter Desired Option : ")))
+    print("\n")
+    if (choice == 1):
+        add_new_expense()
+    elif (choice == 2):
+        see_desired_expense()
+    elif (choice == 3):
+        see_summary()
+    elif (choice == 4):
+        print("Thankyou for Visiting, Keep Earning !!!")
+        break
+    else:
+        print("Invalid Input")
